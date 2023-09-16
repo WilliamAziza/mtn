@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTN</title>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <img src="images/mtn.png" alt="" width="100px" class="header-text">
+    </div>
+    <div class="body">
+        <div>
+            <p class="left-header">You are out of Data</p>
+            <p class="Recharge">Recharge and get back to browsing</p>
+            
+            <button onclick="showDataForm()" class="button">Buy Data</button>
+            
+            <button onclick="showAirtimeForm()" class="button">Buy Airtime</button>
+            <p class="do-more">Do more on MTN</p>
+            <button class="view-button"><img src="images/lite.png" alt="" height="40px" >View more bundle Offers</button>
+            <button class="view-button"><img src="images/ayoba.png" alt="" height="40px"> a message with zero data</button>
+
+            <div id="dataForm" style="display: none;">
+                <h2>Select Data Option</h2>
+                <form onsubmit="initiateDataPurchase(); return false;">
+                    <label for="dataOption">Data Option:</label>
+                    <select id="dataOption" name="dataOption">
+                        <option value="100MB">100 MB</option>
+                        <option value="200MB">200 MB</option>
+                        <option value="300MB">300 MB</option>
+                    </select>
+                    <br> <br>
+                    <button type="submit" class="payment">Proceed to Payment</button>
+                </form>
+            </div>
+
+            <div id="airtimeForm" style="display: none;">
+                <h2>Select Airtime Amount</h2>
+                <form onsubmit="initiateAirtimePurchase(); return false;">
+                    <label for="airtimeAmount">Airtime Amount:</label>
+                    <select id="airtimeAmount" name="airtimeAmount">
+                        <option value="50">50 GHS</option>
+                        <option value="100">100 GHS</option>
+                        <option value="200">200 GHS</option>
+                    </select>
+                    <button type="submit" class="payment">Proceed to Payment</button>
+                </form>
+            </div>
+        </div>
+       
+       
+        <div>
+            <img src="images/mmtn.jpg" alt="" height="500px">
+        </div>
+    </div>
+
+    <script>
+        function generateUniqueReference(prefix) {
+            
+            var timestamp = Date.now();
+            
+            var reference = prefix ? prefix + '-' + timestamp : timestamp.toString();
+            return reference;
+        }
+
+        function showDataForm() {
+            
+            document.getElementById('dataForm').style.display = 'block';
+        }
+
+        function showAirtimeForm() {
+            document.getElementById('airtimeForm').style.display = 'block';
+        }
+
+        function initiateDataPurchase() {
+
+            var dataPublicKey = 'pk_test_a57350bf0a6d0fe3e8dfba560572fa1ea744d19e';
+        
+            var dataReference = generateUniqueReference('data');
+            var selectedOption = document.getElementById('dataOption').value;
+            
+        
+            var amount;
+            switch (selectedOption) {
+                case '100MB':
+                    amount = 500; 
+                    break;
+                case '200MB':
+                    amount = 750; 
+                    break;
+                case '300MB':
+                    amount = 1000; 
+                    break;
+                default:
+                    amount = 0;
+            }
+            
+            var dataHandler = PaystackPop.setup({
+                key: dataPublicKey,
+                email: 'williamaziza37@gmail.com', 
+                amount: amount, 
+                currency: 'GHS', 
+                ref: dataReference, 
+                metadata: {
+                    custom_fields: [
+                        {
+                            display_name: 'Product',
+                            variable_name: 'product',
+                            value: 'Data Bundle',
+                        },
+                    ],
+                },
+                callback: function (response) {
+                    
+                    alert('Data purchase successful. Reference: ' + response.reference);
+                },
+                onClose: function () {
+                    
+                    alert('Data purchase window closed.');
+                },
+            });
+            dataHandler.openIframe();
+        }
+
+        function initiateAirtimePurchase() {
+            
+            var airtimePublicKey = 'pk_test_a57350bf0a6d0fe3e8dfba560572fa1ea744d19e';
+            
+            var airtimeReference = generateUniqueReference('airtime');
+            var selectedAmount = document.getElementById('airtimeAmount').value;
+            
+            
+            var amountInKobo = selectedAmount * 100;
+            
+            var airtimeHandler = PaystackPop.setup({
+                key: airtimePublicKey,
+                email: 'williamaziza37@gmail.com', 
+                amount: amountInKobo, 
+                currency: 'GHS', 
+                ref: airtimeReference, 
+                metadata: {
+                    custom_fields: [
+                        {
+                            display_name: 'Product',
+                            variable_name: 'product',
+                            value: 'Airtime Top-up',
+                        },
+                    ],
+                },
+                callback: function (response) {
+                    
+                    alert('Airtime purchase successful. Reference: ' + response.reference);
+                },
+                onClose: function () {
+                    
+                    alert('Airtime purchase window closed.');
+                },
+            });
+            airtimeHandler.openIframe();
+        }
+    </script>
+</body>
+</html>
